@@ -1,0 +1,5 @@
+__pycache__/
+bio_auth/__pycache__/
+sample.db
+pki/
+venv/

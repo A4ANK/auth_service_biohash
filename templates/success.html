@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+<title>{% block title %}Success {% endblock %}</title>
+{% block content %}
+
+
+    {% if success[0] == 'registerSuccess' %}
+        <h1>User: <b><i>{{ success[1] }}</i></b> is Registered Successfully.</h1>
+
+        <h3>
+            <div class="container" style="background-color:#f1f1f1">
+            <button type="button" class="dashboard">  <a href="/dashboard"><b>Go to Dashboard</b></a></button>
+            </div>
+        </h3>
+    {% elif success[0] == 'forgotSuccess' %}
+        <h1><b><i>{{ success[1] }}'s</i></b> Password Changed Successfully.</h1>
+
+        <h3>
+            <div class="container" style="background-color:#f1f1f1">
+            <button type="button" class="login">  <a href="/auth/login"><b>Login</b></a></button>
+            </div>
+        </h3>
+    {% else %}
+        <h1>Success.</h1>
+        <h2></h2>
+    {% endif %}
+
+{% endblock %}

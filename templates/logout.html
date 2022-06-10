@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+<title>{% block title %}Logout {% endblock %}</title>
+{% block content %}
+    
+    <h1>{{ username }}, logged out successfully.</h1>
+    <h3>        
+        <p>
+            <a href="/auth/login">
+                <button class="button"><b>Login</button>
+            </a>
+        </p>
+        <p>
+            <a href="/auth/signup">
+                <button class="button"><b>Sign Up</button>
+            </a>
+        </p>
+    </h3>
+{% endblock %}

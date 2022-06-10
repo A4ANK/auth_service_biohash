@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+<title>{% block title %}Failure {% endblock %}</title>
+{% block content %}
+
+    {% if error[0] == 'forgotError' %}
+        <h1>Password Not Changed.</h1>
+        <h2>User: <b><i>{{ error[1] }}</i></b> is not Registered / Wrong Image is uploaded.</h2>
+        <h3 style="background-color:red;">Please use the same image file uploaded at the time of account creation.</h3>
+        <h4>Supported Image File Extensions [jpg, png, jpeg, gif, bmp]</h4>
+    {% elif error[0] == 'userExists' %}
+        <h1>User ID: <b><i>{{ error[1] }}</i></b> already Exists.</h1>
+        <h2>Try using another username.</h2>
+
+    {% elif error[0] == 'tokenMissing' or 'NotLoggedIn' %}
+        <h1><b><i>User is not Logged in.</i></b></h1>
+        <h2></h2>
+    {% elif error[0] == 'NotLoggedOut' %}
+        <h1><b><i>User is Not Logged Out successfully.</i></b></h1>
+        <h3>
+            <div class="container" style="background-color:#f1f1f1">
+            <button type="button" class="login">  <a href="/auth/login"><b>Logout Again</b></a></button>
+            </div>
+        </h3>
+
+    {% else %}
+        <h1>Failure.</h1>
+        <h2></h2>
+    {% endif %}
+
+{% endblock %}
