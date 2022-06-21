@@ -1,4 +1,4 @@
-from bio_auth.common import fetch_MaskedID_BioHash, fetchBioImage, fetchMaskedPasswd, genMessageHexDigest
+from bio_auth.common import fetch_MaskedID_BioHash, fetch_emailID, fetchBioImage, fetchMaskedPasswd, genMessageHexDigest
 from bio_auth.crypt import decryptImage
 import io
 from PIL import Image, ImageChops
@@ -18,6 +18,21 @@ def checkUseronly(userid):
         return True
     else:
         print(f"Userid: {userid} is Not Registered.")
+        return False
+
+def checkEmailonly(email):
+    '''
+    Check if a email is present in the DB or not.
+    
+    args: email 
+
+    return: bool
+    '''
+    if( fetch_emailID(email)[0]):
+        print(f"Email: {email} is already registered.")
+        return True
+    else:
+        print(f"Email: {email} is Not Registered.")
         return False
 
 def checkUserRegisterInDB(userid, passwd):

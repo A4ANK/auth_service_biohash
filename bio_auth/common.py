@@ -28,6 +28,29 @@ def fetch_MaskedID_BioHash(userid):
     else:
         return False, []
 
+def fetch_emailID(email):
+    '''
+    Fetch emailID only.
+
+    args: userid
+
+    return: tuple<True, email > 
+            or
+            tuple<False, <> >
+    '''
+    conn = lite.connect(dbname)
+    csor = conn.cursor()
+    csor.execute(f"SELECT email FROM userCredential where userid = ?",(email,))
+    check = csor.fetchall()
+    conn.commit()
+    conn.close()
+
+    if( len(check) != 0 ):
+        email = check[0][0]
+        return True, email
+    else:
+        return False, None
+
 def fetchMaskedPasswd(maskedid):
     '''
     Fetch MaskedPasswd from the DB.
