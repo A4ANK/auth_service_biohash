@@ -13,7 +13,7 @@ from bio_auth.update_credentials import updateUserCredentials
 app = Flask(__name__, template_folder='templates', static_url_path='/static')
 
 
-port = os.getenv("PORT", 80)
+port = os.getenv("PORT", 8080)
 app.config['SECRET_KEY'] = app.secret_key = os.getenv('SECRET_KEY') or 'keyforsigningCookie'
 
 
@@ -135,7 +135,7 @@ def forgot():
 @app.route('/dashboard')
 @app.route('/dashboard/<username>')
 @token_required
-def dashboard(username = None):
+def dashboard(*args, **kwargs):
     if('user' in session and checkUseronly(session['user'])):
         return render_template("dashboard.html", username=session['user'],), 201
     
@@ -206,4 +206,4 @@ if __name__ == '__main__':
     registerServerInStore(serverID)
 
     # app.run(port=port, debug=True, ssl_context=('pki/server.crt', 'pki/server.key'))
-    app.run(port=80, debug=True)
+    app.run(port=port, debug=True)
