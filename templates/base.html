@@ -12,13 +12,22 @@
     <!-- Horizontal Nav bar -->
 
     <ul class="list">
-    <li {% if request.endpoint == "index" %} class="active" {% endif %}><a  href="/">Home</a></li>
-    <li {% if request.endpoint == "login" %} class="active" {% endif %}><a href="/auth/login">Login</a></li>
-    <li {% if request.endpoint == "signup" %} class="active" {% endif %}><a href="/auth/signup">Register</a></li>
-    <li {% if request.endpoint == "about" %} class="active" {% endif %} style="float:right"><a  href="/about">About</a></li>
-    {% if session['user']  %}
-        <li><a class="logout" href="/auth/logout">Logout ({{ session['user'] }})</a></li>
-    {% endif %}
+        <li {% if request.endpoint == "index" %} class="active" {% endif %}><a  href="/">Home</a></li>
+        
+        {% if not session['user']  %}
+            <li {% if request.endpoint == "login" %} class="active" {% endif %}><a href="/auth/login">Login</a></li>
+        {% endif %}
+
+        {% if not session['user']  %}
+            <li {% if request.endpoint == "signup" %} class="active" {% endif %}><a href="/auth/signup">Register</a></li>
+        {% endif %}
+        
+        <li {% if request.endpoint == "about" %} class="active" {% endif %} style="float:right"><a  href="/about">About</a></li>
+        
+        {% if session['user']  %}
+            <li><a class="logout" href="/auth/logout">Logout ({{ session['user'] }})</a></li>
+        {% endif %}
+    
     </ul>
     {% block content %}
     {% endblock %}
