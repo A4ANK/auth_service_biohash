@@ -135,7 +135,7 @@ def forgot():
 @app.route('/dashboard')
 @app.route('/dashboard/<username>')
 @token_required
-def dashboard(username = None):
+def dashboard(*args, **kwargs):
     if('user' in session and checkUseronly(session['user'])):
         return render_template("dashboard.html", username=session['user'],), 201
     

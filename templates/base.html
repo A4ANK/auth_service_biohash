@@ -25,6 +25,10 @@
         <li {% if request.endpoint == "about" %} class="active" {% endif %} style="float:right"><a  href="/about">About</a></li>
         
         {% if session['user']  %}
+        <li {% if request.endpoint == "dashboard" %} class="active" {% endif %}><a href="/dashboard/{{ session['user'] }}">Dashboard ({{ session['user'] }})</a></li>
+        {% endif %}
+
+        {% if session['user']  %}
             <li><a class="logout" href="/auth/logout">Logout ({{ session['user'] }})</a></li>
         {% endif %}
     
