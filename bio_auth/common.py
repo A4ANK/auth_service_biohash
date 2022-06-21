@@ -40,7 +40,7 @@ def fetch_emailID(email):
     '''
     conn = lite.connect(dbname)
     csor = conn.cursor()
-    csor.execute(f"SELECT email FROM userCredential where userid = ?",(email,))
+    csor.execute(f"SELECT email FROM userCredential where email = ?",(email,))
     check = csor.fetchall()
     conn.commit()
     conn.close()
