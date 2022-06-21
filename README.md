@@ -19,7 +19,7 @@
 - Flask (Web Framework)
 - SqliteDB
 - PyCryptoDome (AES Enc-Dec)
-- <b>bio_auth</b> (Custom Module)
+- <b>bio_auth</b> (Custom Package)
 - PyJWT
 - Pillow
 - ImageHash
