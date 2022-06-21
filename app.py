@@ -6,7 +6,7 @@ from flask import Flask, render_template, request, redirect, session, make_respo
 from bio_auth.reg_db import createDB
 from bio_auth.reg_biohash import sendCredentialToStore
 from bio_auth.reg_server import registerServerInStore
-from bio_auth.check_credentials import checkBioImage, checkUserRegisterInDB, checkUseronly
+from bio_auth.check_credentials import checkBioImage, checkEmailonly, checkUserRegisterInDB, checkUseronly
 from bio_auth.update_credentials import updateUserCredentials
 
 
@@ -43,6 +43,22 @@ def index():
 @app.route('/about')
 def about():
     return render_template('about.html')
+
+@app.route('/checkuseronly',  methods = ['POST'])
+def checkuseronly():
+    username = request.form.get('username')
+    if username:
+        if checkUseronly(username):
+            return make_response(jsonify({"status": "Username Already Taken."}), 200)
+    return make_response(jsonify({"status": "Available"}), 200)
+
+@app.route('/checkemailonly',  methods = ['POST'])
+def checkemailonly():
+    email = request.form.get('email')
+    if email:
+        if checkEmailonly(email):
+            return make_response(jsonify({"status": "Email is already used."}), 200)
+    return make_response(jsonify({"status": "Allowed"}), 200)
 
 @app.route('/auth/login', methods = ['POST', 'GET'])
 def login():
