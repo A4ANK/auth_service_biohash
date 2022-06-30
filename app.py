@@ -1,39 +1,24 @@
-from functools import wraps
 import socket
 import os
 import jwt
 from flask import Flask, render_template, request, redirect, session, make_response, jsonify, abort
+from bio_auth.common import fetchAllUserPermissions, fetchAllowedServersUsers, fetchAllowedServersAdmin, fetchUserPermissions, randomPassGen, randomImageGen
+from bio_auth.constants import ADMIN_PASS
 from bio_auth.reg_db import createDB
 from bio_auth.reg_biohash import sendCredentialToStore
 from bio_auth.reg_server import registerServerInStore
 from bio_auth.check_credentials import checkBioImage, checkEmailonly, checkUserRegisterInDB, checkUseronly
+from bio_auth.reg_server_links import registerLinkUser
+from bio_auth.reg_userPermissions import storeUserPermissionInDB
 from bio_auth.update_credentials import updateUserCredentials
-
+from app_utils import token_required
+import datetime
+from app_utils import TZ
 
 app = Flask(__name__, template_folder='templates', static_url_path='/static')
 
-
 port = os.getenv("PORT", 8080)
 app.config['SECRET_KEY'] = app.secret_key = os.getenv('SECRET_KEY') or 'keyforsigningCookie'
-
-
-def token_required(func):
-    @wraps(func)
-    def decorator(*args, **kwargs):
-        token = None
-        if 'x-access-token' in request.headers:
-            token = request.headers['x-access-token'] 
-        elif 'token' in session:
-            token = session['token']
-        if not token:
-            return render_template("failed.html", error = ("tokenMissing", "")), 401, {"message": "Missing Token."}
-        try:
-            data = jwt.decode(token, app.config['SECRET_KEY'], algorithms=['HS256'])
-            current_user = data['userid']
-        except:
-            return make_response(jsonify({"message": "Invalid Token"}), 401)
-        return func(current_user, *args, **kwargs)
-    return decorator
 
 
 @app.route('/')
@@ -66,7 +51,16 @@ def login():
         username = request.authorization.username
         password = request.authorization.password
         if checkUserRegisterInDB(username, password):
-            token = jwt.encode({'userid': username}, app.config['SECRET_KEY'], 'HS256')
+            perms = fetchUserPermissions(username)
+            print(f"{username} => {perms}")
+            # days=0, seconds=0, microseconds=0, milliseconds=0, minutes=0, hours=0, weeks=0
+            payload = {
+                'userid': username,
+                'perms': perms,  
+                'exp': datetime.datetime.now(TZ) + datetime.timedelta(minutes=5),
+                'iat': datetime.datetime.now(TZ),
+                }
+            token = jwt.encode(payload, app.config['SECRET_KEY'], 'HS256')
             session['user'] = username
             session['token'] = token
             return render_template('dashboard.html', username=session['user'],), 201, {'Authorization': 'Bearer {}'.format(token)}
@@ -77,14 +71,22 @@ def login():
         password = request.form.get('password')    
 
         if checkUserRegisterInDB(username, password):
-            token = jwt.encode({'userid': username}, app.config['SECRET_KEY'], 'HS256')
+            perms = fetchUserPermissions(username)
+            print(f"{username} => {perms}")
+            # days=0, seconds=0, microseconds=0, milliseconds=0, minutes=0, hours=0, weeks=0
+            payload = {
+                'userid': username,
+                'perms': perms,  
+                'exp': datetime.datetime.now(TZ) + datetime.timedelta(minutes=5),
+                'iat': datetime.datetime.now(TZ),
+                }
+            token = jwt.encode(payload, app.config['SECRET_KEY'], 'HS256')
             session['user'] = username
             session['token'] = token
             return render_template('dashboard.html', username=session['user'],), 201, {'Authorization': 'Bearer {}'.format(token)}
         return render_template("wrong.html"), 401, {'WWW-Authenticate': 'Basic-realm= "Login Required."'}
 
-    return render_template("login.html")
-
+    return render_template("login.html"), 200
 
 @app.route('/auth/signup', methods = ['POST', 'GET'])
 def signup():
@@ -105,7 +107,16 @@ def signup():
         elif( imageFile is not None and
             imageFile.filename.rsplit('.', 1)[1].lower() in accept
             ):
-            token = jwt.encode({'userid': username}, app.config['SECRET_KEY'], 'HS256')
+            perms = (False, False, False, False) # Default permissions of a user. # Least Privileges.
+            timestamp = datetime.datetime.now(TZ)
+            # days=0, seconds=0, microseconds=0, milliseconds=0, minutes=0, hours=0, weeks=0
+            payload = {
+                'userid': username,
+                'perms': perms,  
+                'exp': timestamp + datetime.timedelta(minutes=5),
+                'iat': timestamp,
+                }
+            token = jwt.encode(payload, app.config['SECRET_KEY'], 'HS256')
             session['user'] = username
             session['token'] = token
             userid = username
@@ -114,7 +125,8 @@ def signup():
             bioImage = imageFile.read()
             imageFile.close()
             sendCredentialToStore(userid, passwd, email, bioImage)
-            
+            storeUserPermissionInDB(userid, False, False, False, False, timestamp)
+            registerLinkUser(userid, "")
             return render_template("success.html", success = ('registerSuccess', username)), 202
 
         return redirect('/errors/signup'), 415
@@ -151,22 +163,56 @@ def forgot():
 @app.route('/dashboard')
 @app.route('/dashboard/<username>')
 @token_required
-def dashboard(*args, **kwargs):
+def dashboard(username = None, perms = None):
+
     if('user' in session and checkUseronly(session['user'])):
-        return render_template("dashboard.html", username=session['user'],), 201
+        if session['user'] == 'admin':
+            links = fetchAllowedServersAdmin()
+            permsDict = fetchAllUserPermissions()
+            return render_template("dashboard.html", username=username, perms=perms, links=links, permsDict=permsDict,), 201
     
-    return render_template("failed.html", error = ("NotLoggedIn", "")), 401, {'WWW-Authenticate': 'Basic-realm= "Login required!"'} 
+        else:
+            links = fetchAllowedServersUsers(username)
+            return render_template("dashboard.html", username=username, perms=perms, links=links,), 201
+    
+    else:
+        if 'user' in session:
+            session.pop('user')
+            if 'token' in session:
+                session.pop('token')
+    return render_template("failed.html", error=('NotLoggedIn',),), 201
+    
+
+@app.route('/auth/add_servers', methods = ['POST', 'GET'])
+@token_required
+def add_servers(username = None, perms = None):
+    if request.method == 'GET':
+        return render_template("add_servers.html")
+    elif(request.method == 'POST'):
+        server = request.form.get('server')
+        if server:
+            registerLinkUser(username, server)
+            return render_template("success.html", success = ("serverAdded", server, username)), 202
+        else:
+            return render_template("failed.html", error = ("serverAddError", server, username)), 400
+    else:
+        return render_template("failed.html", error = ("serverAddError", server, username)), 400
+
 
 @app.route('/auth/logout')
 @token_required
-def logout(username = None):
+def logout(username = None, perms = None):
     if 'user' in session and checkUseronly(session['user']):
         username = session['user']
-        session.pop('user')
+        session.pop('user')         
         session.pop('token')          
         return render_template('logout.html', username = username), 200
     else:
         print("User not logged out successfully.")
+        if 'user' in session:
+            session.pop('user')
+            if 'token' in session:
+                session.pop('token')
         return render_template("failed.html", error = ("NotLoggedOut", "")), 401
 
 
@@ -212,8 +258,9 @@ def error(error = None):
         app.logger.error(f'Key {error} is causing an KeyError')
         abort(404)
 
-
-if __name__ == '__main__':
+def auth_app_init():
+    # deleteDB() # useful when testing (It deletes the sqliteDB)
+    
     createDB()
     hostname = socket.gethostname()
     ip = socket.gethostbyname(hostname)
@@ -221,5 +268,22 @@ if __name__ == '__main__':
 
     registerServerInStore(serverID)
 
-    # app.run(port=port, debug=True, ssl_context=('pki/server.crt', 'pki/server.key'))
-    app.run(port=port, debug=True)
+    ###############################################
+    # store admin user credentials for first time
+    userid = "admin"
+    passwd = ADMIN_PASS or randomPassGen(20) # 20 Chracter long random password
+    print(
+    f'''
+    Admin Password = {passwd} 
+    ''')
+    email = "admin@mail.com"
+    timestamp = datetime.datetime.now(TZ)
+    bioImage = randomImageGen(size=(300,300)) # image size == 100 * 100
+    sendCredentialToStore(userid, passwd, email, bioImage)
+    storeUserPermissionInDB(userid, True, True, True, True, timestamp)
+    registerLinkUser(userid, "")
+    ################################################
+    app.run(port=port, debug=False)
+
+if __name__ == '__main__':
+    pass
