@@ -1,7 +1,58 @@
 {% extends 'base.html' %}
 <title>{% block title %}Dashboard {% endblock %}</title>
 {% block content %}
-
-    <h1>Welcome, {{ username }}</h1>
-    <h2>You are authorized to following servers only.</h2>
+    {% if username == "admin" %}
+        <h1>Admin Console</h1>
+        <p>
+            <a href="/auth/add_servers"><button type="button" class="button"><b>Add New Server</b></button></a>
+        </p>
+        <h2>Go to Dashboard to see the list of accessible Servers by you.</h2>
+        <h3>Available Servers</h3>
+        <table style="width:90%">
+            <tr>
+                <th colspan="1">Username</th>
+                <th colspan="1">Server Name</th>
+                <th colspan="4">Permissions</th>
+            </tr>
+            <tr>
+                <th></th>
+                <th></th>
+                <th>Create</th>
+                <th>Read</th>
+                <th>Update</th>
+                <th>Delete</th>
+            </tr>
+            <p></p>
+            {% for link in links %}
+            <tr>
+                <td><b>{{ link[0] }} </b></td>
+                <td><b><a href="{{ link[1] }}" target="_blank" rel="noopener noreferrer">{{ link[1] }}</a></b></td>
+                {% for permission in permsDict[link[0]] %} 
+                    {% if permission %}
+                        <td><b>True</b></td>
+                    {% else %}
+                        <td><b>False</b></td>
+                    {% endif %}
+                {% endfor %}   
+            </tr>
+            {% endfor %}
+        </table>
+    {% else %}
+        <h1>Welcome, {{ username }}</h1>
+        <p>
+            <a href="/auth/add_servers"><button type="button" class="button"><b>Add New Server</b></button></a>
+        </p>
+        <h2>Go to Dashboard to see the list of accessible Servers by you.</h2>
+        <h3>Available Servers</h3>
+        <table style="width:90%">
+            <tr>
+                <th>Accessible Server(s)</th>
+            </tr>
+            {% for link in links %}
+            <tr>
+                <td><b><a href="{{ link }}" target="_blank" rel="noopener noreferrer">{{ link }}</a></b></td>
+            </tr>
+            {% endfor %}
+        </table>
+    {% endif %}
 {% endblock %}
