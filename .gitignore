@@ -3,3 +3,4 @@ bio_auth/__pycache__/
 sample.db
 pki/
 venv/
+run_apps.py
