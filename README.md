@@ -1,5 +1,5 @@
-# Authentication service using Bio-Hash.
-### It uses hash values generated using images for validation of user credentials.
+# Multi Server Authentication service using Bio-Hash.
+### It uses hash values generated using images for validation of user credentials and server authorization by a user.
 
 ### 1. Architecture
 ![Architecture](/static/images/arch.svg "Architecture")
@@ -18,6 +18,7 @@
 - Python3
 - Flask (Web Framework)
 - SqliteDB
+- Pymongo
 - PyCryptoDome (AES Enc-Dec)
 - <b>bio_auth</b> (Custom Package)
 - PyJWT
@@ -25,6 +26,7 @@
 - ImageHash
 - HMAC
 - Hashlib
+- Pytz
 
 ### Setup Application
 
