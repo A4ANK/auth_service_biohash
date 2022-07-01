@@ -11,17 +11,33 @@
         <h1>User ID: <b><i>{{ error[1] }}</i></b> already Exists.</h1>
         <h2>Try using another username.</h2>
 
-    {% elif error[0] == 'tokenMissing' or 'NotLoggedIn' %}
+    {% elif error[0] == 'tokenMissing' or 'NotLoggedIn' or 'invalidToken'%}
         <h1><b><i>User is not Logged in.</i></b></h1>
         <h2></h2>
+
+    {% elif error[0] == 'tokenMissing' or 'NotLoggedIn' or 'invalidToken'%}
+        <h1><b><i>User is not Logged in.</i></b></h1>
+        <h2></h2>
+
+    {% elif error[0] == 'tokenExpired'%}
+        <h1><b><i>Session is expired.</i></b></h1>
+        <h2><b>Please login again.</b></h2>
+
     {% elif error[0] == 'NotLoggedOut' %}
         <h1><b><i>User is Not Logged Out successfully.</i></b></h1>
         <h3>
             <div class="container" style="background-color:#f1f1f1">
-            <button type="button" class="login">  <a href="/auth/login"><b>Logout Again</b></a></button>
+            <a href="/auth/logout"><button type="button" class="login"></button><b>Logout Again</b></button></a>
             </div>
         </h3>
-
+        
+    {% elif error[0] == 'serverAddError' %}
+        <h1><b><i>error[1] is not added in the DB.</i></b></h1>
+        <h3>
+            <div class="container" style="background-color:#f1f1f1">
+            <a href="/auth/add_servers"><button type="button" class="login"></button><b>Try Again</b></button></a>
+            </div>
+        </h3>
     {% else %}
         <h1>Failure.</h1>
         <h2></h2>

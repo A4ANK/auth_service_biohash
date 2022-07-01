@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="icon" href="data:,">
+        <title>Test Server</title>
+    </head>
+    <body>
+        <h2>Authorization Required to Access this Server.</h2>
+        <div id="form">
+            <!-- <form class="modal-content animate" action="/" method="post" enctype="multipart/form-data"> -->
+            <form class="modal-content animate" action="/test_server" method="post" enctype="multipart/form-data">
+        
+                <div class="container">
+                    <label for="image"><b>Upload Image for Bio-Hash</b></label>
+                    <input type="file" name="image" id="imageForSignup" required>
+                    
+                    <button type="submit" id="button" ><b>Authorize</b></button>
+        
+                </div>
+        
+            </form>
+        </div>
+    </body>
+</html>

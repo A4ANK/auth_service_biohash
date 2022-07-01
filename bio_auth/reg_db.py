@@ -1,5 +1,7 @@
+from logging import raiseExceptions
 import sqlite3 as lite
 from bio_auth.constants import DB_NAME
+import os
 
 def createDB(dbname = DB_NAME):
     '''
@@ -30,4 +32,19 @@ def createDB(dbname = DB_NAME):
     conn.commit()
 
     conn.close()
-    
+
+
+
+
+def deleteDB(dbname = DB_NAME):
+    '''
+    DELETE the DATABASE file if already present. 
+    args: DB_NAME
+
+    return: None
+    '''
+    try:
+        if(os.path.isfile(dbname)):
+            os.remove(dbname)
+    except Exception as err:
+        raiseExceptions(err)

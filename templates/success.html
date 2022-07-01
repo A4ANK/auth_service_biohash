@@ -8,7 +8,7 @@
 
         <h3>
             <div class="container" style="background-color:#f1f1f1">
-            <button type="button" class="dashboard">  <a href="/dashboard"><b>Go to Dashboard</b></a></button>
+            <a href="/dashboard"><button type="button" class="dashboard"><b>Go to Dashboard</b></button></a>
             </div>
         </h3>
     {% elif success[0] == 'forgotSuccess' %}
@@ -16,7 +16,15 @@
 
         <h3>
             <div class="container" style="background-color:#f1f1f1">
-            <button type="button" class="login">  <a href="/auth/login"><b>Login</b></a></button>
+            <a href="/auth/login"><button type="button" class="login"><b>Login</b></button></a>
+            </div>
+        </h3>
+    {% elif success[0] == 'serverAdded' %}
+        <h1>"<b><i>{{ success[1] }}</i></b>" is added successfully.</h1>
+
+        <h3>
+            <div class="container" style="background-color:#f1f1f1">
+            <a href="/auth/add_servers"><button type="button" class="server"><b>Add More Servers</b></button></a>
             </div>
         </h3>
     {% else %}
