@@ -271,7 +271,7 @@ def auth_app_init():
     ###############################################
     # store admin user credentials for first time
     userid = "admin"
-    passwd = ADMIN_PASS or randomPassGen(20) # 20 Chracter long random password
+    passwd = os.getenv("ADMIN_PASS") or randomPassGen(20) # 20 Chracter long random password
     print(
     f'''
     Admin Password = {passwd} 
