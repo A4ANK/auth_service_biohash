@@ -113,7 +113,7 @@ def fetchAllowedServersUsers(userid):
     if MONGODB_COLLECTION_NAME in collection_list:
         collection = db[MONGODB_COLLECTION_NAME]
         links = collection.find({ "userid" : f"{userid}"},{ "_id": 0, f"{userid}": 1, f"{MONGODB_COLLECTION_NAME}": 1})
-        if links:
+        if links[0]['links']:
             userLinks = [link for link in links[0]['links']]
             return userLinks
         else:
