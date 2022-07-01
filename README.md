@@ -49,6 +49,11 @@ pip install -r requirements.txt
 - Launch Flask web app.
 ```
 python run_apps.py
+...
+
+Admin Password = "random password generated if env var ADMIN_PASS is not set."
+
+...
 ```
 
 ### Author:-
