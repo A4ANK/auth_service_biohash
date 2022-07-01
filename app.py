@@ -3,7 +3,6 @@ import os
 import jwt
 from flask import Flask, render_template, request, redirect, session, make_response, jsonify, abort
 from bio_auth.common import fetchAllUserPermissions, fetchAllowedServersUsers, fetchAllowedServersAdmin, fetchUserPermissions, randomPassGen, randomImageGen
-from bio_auth.constants import ADMIN_PASS
 from bio_auth.reg_db import createDB
 from bio_auth.reg_biohash import sendCredentialToStore
 from bio_auth.reg_server import registerServerInStore
