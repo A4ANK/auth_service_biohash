@@ -2,7 +2,7 @@
 <title>{% block title %}Home {% endblock %}</title>
 {% block content %}
     <h1>Authentication service using Bio-Hash</h1>
-    <h3>It uses hash values generated using images for validation of user credentials.</h3>
+    <h3>It uses hash values generated using images for validation of user credentials and server authorization by a user.</h3>
     <h2>1. Architecture</h2>
     <img src="{{ url_for('static', filename='images/arch.svg') }}" alt="Architecture"  width="800" height="350">
     
@@ -12,10 +12,10 @@
     <h2>3. Usecases:- </h2>
     <table style="width:90%">
         <tr>
-            <td>1. It can be used as <b>Authentication as a Service</b>.</td>
+            <td>1. It can be used as <b>Multi Server Authentication as a Service</b>.</td>
         </tr>
         <tr>
-            <td>2. <b>OpenID Connect</b> can also added to it.</td>
+            <td>2. <b>OpenID Connect</b> can be added to it.</td>
         </tr>
         <tr>
             <td>3. <b>Scope mechanism</b> of <b>OAuth 2.0</b> can be added in an application's access to a user's account.</td>
