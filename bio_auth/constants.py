@@ -16,5 +16,3 @@ stringNone = lambda keyStr: keyStr.encode if keyStr else None
 
 AES_KEY = stringNone(getenv("AES_KEY")) or b'eyJ0b2tlbiI6ImV5SjBlWEFpT2lKS1Yx' # 32 Byte
 AES_IV = stringNone(getenv("AES_IV")) or b'eyJ0b2tlbiI6ImV5'  # 16 Byte
-
-ADMIN_PASS = stringNone(getenv("ADMIN_PASS"))
