@@ -48,7 +48,7 @@ pip install -r requirements.txt
 
 - Launch Flask web app.
 ```
-python app.py
+python run_apps.py
 ```
 
 ### Author:-
