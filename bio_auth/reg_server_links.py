@@ -11,11 +11,12 @@ def registerLinkUser(userid, serverLink):
 
     return: None
     '''
-    client = MongoClient(MONGODB_URI_ADMIN) 
-    db = client[MONGODB_NAME]
-    collection = db[MONGODB_COLLECTION_NAME]
+    if serverLink:
+        client = MongoClient(MONGODB_URI_ADMIN) 
+        db = client[MONGODB_NAME]
+        collection = db[MONGODB_COLLECTION_NAME]
 
-    try:
-        collection.update_one({'userid': userid}, {'$addToSet': {'links': serverLink}}, upsert=True)
-    except Exception as err:
-            raiseExceptions(err)    
+        try:
+            collection.update_one({'userid': userid}, {'$addToSet': {'links': serverLink}}, upsert=True)
+        except Exception as err:
+                raiseExceptions(err)    
