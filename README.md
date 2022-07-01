@@ -8,9 +8,9 @@
 ![Deployment](/static/images/deploy.svg "Deployment")
   
 ### 3. Usecases:- 
-- 1. It can be used as <b>Authentication as a Service</b>.
+- 1. It can be used as <b>Multi Server Authentication as a Service</b>.
 
-- 2. <b>OpenID Connect</b> can also added to it.
+- 2. <b>OpenID Connect</b> can be added to it.
 
 - 3. <b>Scope mechanism</b> of <b>OAuth 2.0</b> can be added in an application's access to a user's account.
 
